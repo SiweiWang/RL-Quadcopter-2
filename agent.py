@@ -81,4 +81,23 @@ class DDPG():
 
 
         # Train actor model (local)
-        action_gradients = np.reshape(self.critic_local.get_action_gradients([states, actions, 0]), )
+        action_gradients = np.reshape(self.critic_local.get_action_gradients([states, actions, 0]),
+                            (-1, self.action_size))
+        self.actor_local.train_fn([states, action_gradients, 1])
+
+
+        # Soft-update target method
+
+        self.soft_update(self.critic_local.model, self.critic_target.model)
+        self.soft_update(self.actor_local.model, self.actor_target.model)
+
+    def soft_update(self, local_model, target_model):
+        """Soft update model parameters."""
+        local_weights = np.array(local_model.get_weights())
+        target_weights = np.array(target_model.get_weights())
+
+
+        assert len(local_weights) == len(target_weights), "Local and target model parameters mush have the same size"
+        new_weights = self.tau * local_weights + (1 - self.tau) * target_weights
+        target_model.set_weights(new_weights)
+
