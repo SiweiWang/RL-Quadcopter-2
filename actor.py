@@ -1,6 +1,9 @@
 from keras import layers, models, optimizers
 from keras import backend as K
 
+HIDDEN1_UNITS = 32
+HIDDEN2_UNITS = 64
+
 class Actor:
     """
     Actor (Policy) Model
@@ -28,6 +31,7 @@ class Actor:
 
 
         self.build_model()
+
     def build_model(self):
         """ Build an actor (policy) network that maps state -> actions. """
         # Define input layer (states)
@@ -68,4 +72,4 @@ class Actor:
             inputs = [self.model.input, action_gradients, K.learning_phase()],
             outputs=[],
             updates=updates_op)
-        )
+
